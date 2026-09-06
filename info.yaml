@@ -3,7 +3,7 @@ project:
   top_module:  "tt_um_ucl_display"
   wokwi_id:    0
   source_files:
-    - "tt_um_ucl_display.v"
+    - "project.v"
   title: "Flashing... lights" # Project title
   author: "Ezekiel Wojtas" # Your name
   discord: "" # Your discord username, for communication and automatically assigning you a Tapeout role (optional)

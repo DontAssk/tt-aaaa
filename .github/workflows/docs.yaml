@@ -25,7 +25,7 @@ jobs:
         run: pip install git+https://github.com/tinytapeout/tt-support-tools.git
 
       - name: build docs
-        run: tt_tool.py --create-user-docs
+        run: python -m ttboard.cli --create-user-docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

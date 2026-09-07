@@ -29,14 +29,17 @@ module tt_um_ucl_display (
         end
     end
 
-    // 4-bit state counter (cycles 0 to 8)
+    // Counter needs to count up to state 15 (4 bits: 0 to 15) for longer text
     reg [3:0] state;
+
+    // Maximum sequence length based on active mode
+    wire [3:0] max_state = (ui_in[2]) ? 4'd15 : 4'd8;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             state <= 4'b0000;
         end else if (slow_tick && ui_in[0]) begin // Advances ONLY when UI_IN[0] is ON
-            if (state == 4'd8)
+            if (state >= max_state)
                 state <= 4'b0000;
             else
                 state <= state + 1'b1;
@@ -47,12 +50,33 @@ module tt_um_ucl_display (
     reg [7:0] seg_decoder;
 
     always @(*) begin
-        if (ui_in[1]) begin
-            // Mode 2: Flash 'A' and '.' alternately based on state counter bit
+        if (ui_in[2]) begin
+            // Mode 3: "Ezekiel WAS HERE" (16 states)
+            case (state)
+                4'b0000: seg_decoder = 8'b01111001; // 'E'
+                4'b0001: seg_decoder = 8'b01011011; // 'z'
+                4'b0010: seg_decoder = 8'b01111001; // 'e'
+                4'b0011: seg_decoder = 8'b01110100; // 'k'
+                4'b0100: seg_decoder = 8 meb00110000; // 'i'
+                4'b0101: seg_decoder = 8'b01111001; // 'e'
+                4'b0110: seg_decoder = 8'b00111000; // 'l'
+                4'b0111: seg_decoder = 8'b00000000; // Blank
+                4'b1000: seg_decoder = 8'b00111110; // 'W' (rendered as U)
+                4'b1001: seg_decoder = 8'b01110111; // 'A'
+                4'b1010: seg_decoder = 8'b01101101; // 'S'
+                4'b1011: seg_decoder = 8'b00000000; // Blank
+                4'b1100: seg_decoder = 8'b01110110; // 'H'
+                4'b1101: seg_decoder = 8'b01111001; // 'E'
+                4'b1110: seg_decoder = 8'b01010000; // 'r'
+                4'b1111: seg_decoder = 8'b01111001; // 'E'
+                default: seg_decoder = 8'b00000000;
+            endcase
+        end else if (ui_in[1]) begin
+            // Mode 2: Flash 'A' and '.'
             if (state[0]) begin
                 seg_decoder = 8'b01110111; // 'A'
             end else begin
-                seg_decoder = 8'b10000000; // '.' (decimal point only)
+                seg_decoder = 8'b10000000; // '.'
             end
         end else begin
             // Mode 1: Normal UCL sequence
@@ -65,7 +89,7 @@ module tt_um_ucl_display (
                 4'b0101: seg_decoder = 8'b00111111; // '0'
                 4'b0110: seg_decoder = 8'b01011011; // '2'
                 4'b0111: seg_decoder = 8'b00000111; // '7'
-                4'b1000: seg_decoder = 8'b01111100; // Smiley Face ☺
+                4'b1000: seg_decoder = 8'b11111111; // Smiley Face ☺
                 default: seg_decoder = 8'b00000000;
             endcase
         end
@@ -75,3 +99,4 @@ module tt_um_ucl_display (
     assign uo_out = seg_decoder;
 
 endmodule
+

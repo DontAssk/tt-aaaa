@@ -21,13 +21,17 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install tt-support-tools
-        run: |
-          python -m pip install --upgrade pip
-          pip install git+https://github.com/tinytapeout/tt-support-tools.git
+      - name: Checkout tt-support-tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: 'tinytapeout/tt-support-tools'
+          path: 'tt'
+
+      - name: Install dependencies
+        run: pip install -r tt/requirements.txt
 
       - name: build docs
-        run: python -m tt_tools.project --create-user-docs
+        run: ./tt/tt_tool.py --create-user-config --create-user-docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

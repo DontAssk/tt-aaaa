@@ -32,10 +32,10 @@ module tt_um_ucl_display (
     // 4-bit state counter (cycles 0 to 8)
     reg [3:0] state;
 
-    always @(posedge clk or negedge rst_n) begin
+       always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             state <= 4'b0000;
-        end else if (slow_tick) begin
+        end else if (slow_tick && ui_in[0]) begin // Advances ONLY when UI_IN[0] is ON
             if (state == 4'd8)
                 state <= 4'b0000;
             else

@@ -32,7 +32,7 @@ The GitHub action will automatically fetch the digital netlist from Wokwi and bu
 
 HI!!!, this simply cycles through the letters "U C L  2 0 2 7 " when an input 0 is turned on, and when both 0 and 1 are on it flashes "A.A....". wish i could've done more but i have some silly things called "A-Levels" to revise for :/ . 
 edit: nevermind this was fun so i added something. when 0 and 2 is pressed it goes "Ezekiel Uas Here" (W is hard on a 7 seg display, man)
- edit: OK LAST ONE I PROMISE. 0 and 3 together make "I A PCB HELP PLS"(I know its not a pcb okay it just sounds funny). Letters are kind of janky but don't make fun of my child :| .
+ edit: OK LAST ONE I PROMISE. 0 and 3 together make "I STUCK IN PCB HELP PLS"(I know its not a pcb okay it just sounds funny). Letters are kind of janky but don't make fun of my child :| .
 
 - Share your project on your social network of choice:
   - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)

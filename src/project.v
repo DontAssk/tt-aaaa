@@ -36,7 +36,7 @@ module tt_um_ucl_display (
     reg [4:0] max_state;
     always @(*) begin
         if (ui_in[3])
-            max_state = 5'd22; // "I STUCK IN PCB. HELP PLS" (23 characters: 0 to 22)
+            max_state = 5'd23; // "I STUCK IN PCB. HELP PLS" (23 characters: 0 to 22)
         else if (ui_in[2])
             max_state = 5'd15; // "Ezekiel WAS HERE" (16 characters: 0 to 15)
         else

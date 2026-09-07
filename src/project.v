@@ -57,7 +57,7 @@ module tt_um_ucl_display (
                 4'b0001: seg_decoder = 8'b01011011; // 'z'
                 4'b0010: seg_decoder = 8'b01111001; // 'e'
                 4'b0011: seg_decoder = 8'b01110100; // 'k'
-                4'b0100: seg_decoder = 8 meb00110000; // 'i'
+                4'b0100: seg_decoder = 8'b00110000; // 'i'
                 4'b0101: seg_decoder = 8'b01111001; // 'e'
                 4'b0110: seg_decoder = 8'b00111000; // 'l'
                 4'b0111: seg_decoder = 8'b00000000; // Blank
@@ -89,7 +89,7 @@ module tt_um_ucl_display (
                 4'b0101: seg_decoder = 8'b00111111; // '0'
                 4'b0110: seg_decoder = 8'b01011011; // '2'
                 4'b0111: seg_decoder = 8'b00000111; // '7'
-                4'b1000: seg_decoder = 8'b11111111; // Smiley Face ☺
+                4'b1000: seg_decoder = 8'b01111000; // Smiley Face ☺
                 default: seg_decoder = 8'b00000000;
             endcase
         end
@@ -99,4 +99,3 @@ module tt_um_ucl_display (
     assign uo_out = seg_decoder;
 
 endmodule
-

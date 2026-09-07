@@ -32,7 +32,7 @@ The GitHub action will automatically fetch the digital netlist from Wokwi and bu
 
 - [Submit your design to the next shuttle](https://app.tinytapeout.com/).
 - Edit [this README](README.md) and explain your design, how it works, and how to test it.
-HI!!!, this simply cycles through the letters "U C L  2 0 2 7 " when an input is turned on.
+HI!!!, this simply cycles through the letters "U C L  2 0 2 7 " when an input 0 is turned on, and when both 0 and 1 are on it flashes "A.A....". wish i could've done more but i have some silly things called "A-Levels" to revise for :/ . 
 
 
 - Share your project on your social network of choice:

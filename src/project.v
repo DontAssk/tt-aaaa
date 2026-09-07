@@ -18,7 +18,7 @@ module tt_um_ucl_display (
     // Optional: Slow down clock to ~1 Hz using a counter 
     // Assuming a 10 MHz system clock from the TT board
     reg [23:0] clk_divider;
-    wire slow_tick = (clk_divider == 24'd10_000_000 - 1);
+    wire slow_tick = (clk_divider == 24'd2 - 1);
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

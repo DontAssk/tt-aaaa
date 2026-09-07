@@ -15,8 +15,7 @@ module tt_um_ucl_display (
     assign uio_out = 8'b0;
     assign uio_oe  = 8'b0;
 
-    // Optional: Slow down clock to ~1 Hz using a counter 
-    // Assuming a 10 MHz system clock from the TT board
+    // Clock divider: set to trigger every 2 cycles for browser simulation
     reg [23:0] clk_divider;
     wire slow_tick = (clk_divider == 24'd2 - 1);
 
@@ -30,30 +29,34 @@ module tt_um_ucl_display (
         end
     end
 
-    // 3-bit state counter (cycles 0 to 7)
-    reg [2:0] state;
+    // 4-bit state counter (cycles 0 to 8)
+    reg [3:0] state;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            state <= 3'b000;
+            state <= 4'b0000;
         end else if (slow_tick) begin
-            state <= state + 1'b1;
+            if (state == 4'd8)
+                state <= 4'b0000;
+            else
+                state <= state + 1'b1;
         end
     end
 
-    // Map 3-bit state to 7-segment display: {dp, g, f, e, d, c, b, a}
+    // Map 4-bit state to 7-segment display: {dp, g, f, e, d, c, b, a}
     reg [7:0] seg_decoder;
 
     always @(*) begin
         case (state)
-            3'b000: seg_decoder = 8'b00111110; // 'U'
-            3'b001: seg_decoder = 8'b00111001; // 'C'
-            3'b010: seg_decoder = 8'b00111000; // 'L'
-            3'b011: seg_decoder = 8'b00000000; //  Blank
-            3'b100: seg_decoder = 8'b01011011; // '2'
-            3'b101: seg_decoder = 8'b00111111; // '0'
-            3'b110: seg_decoder = 8'b01011011; // '2'
-            3'b111: seg_decoder = 8'b00000111; // '7'
+            4'b0000: seg_decoder = 8'b00111110; // 'U'
+            4'b0001: seg_decoder = 8'b00111001; // 'C'
+            4'b0010: seg_decoder = 8'b00111000; // 'L'
+            4'b0011: seg_decoder = 8'b00000000; // Blank
+            4'b0100: seg_decoder = 8'b01011011; // '2'
+            4'b0101: seg_decoder = 8'b00111111; // '0'
+            4'b0110: seg_decoder = 8'b01011011; // '2'
+            4'b0111: seg_decoder = 8'b00000111; // '7'
+            4'b1000: seg_decoder = 8'b01111100; // Smiley Face ☺
             default: seg_decoder = 8'b00000000;
         endcase
     end

@@ -22,10 +22,12 @@ jobs:
           python-version: '3.11'
 
       - name: Install tt-support-tools
-        run: pip install git+https://github.com/tinytapeout/tt-support-tools.git
+        run: |
+          pip install git+https://github.com/tinytapeout/tt-support-tools.git
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: build docs
-        run: python -m ttboard.cli --create-user-docs
+        run: python -m tt_support_tools.tt_tool --create-user-docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

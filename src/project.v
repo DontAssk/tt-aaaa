@@ -29,18 +29,26 @@ module tt_um_ucl_display (
         end
     end
 
-    // Counter needs to count up to state 15 (4 bits: 0 to 15) for longer text
-    reg [3:0] state;
+    // 5-bit state counter (cycles up to 22 states)
+    reg [4:0] state;
 
-    // Maximum sequence length based on active mode
-    wire [3:0] max_state = (ui_in[2]) ? 4'd15 : 4'd8;
+    // Set sequence length dynamically based on input selection
+    reg [4:0] max_state;
+    always @(*) begin
+        if (ui_in[3])
+            max_state = 5'd22; // "I STUCK IN PCB. HELP PLS" (23 characters: 0 to 22)
+        else if (ui_in[2])
+            max_state = 5'd15; // "Ezekiel WAS HERE" (16 characters: 0 to 15)
+        else
+            max_state = 5'd8;  // "UCL 2027? ☺" (9 characters: 0 to 8)
+    end
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            state <= 4'b0000;
+            state <= 5'b00000;
         end else if (slow_tick && ui_in[0]) begin // Advances ONLY when UI_IN[0] is ON
             if (state >= max_state)
-                state <= 4'b0000;
+                state <= 5'b00000;
             else
                 state <= state + 1'b1;
         end
@@ -50,9 +58,38 @@ module tt_um_ucl_display (
     reg [7:0] seg_decoder;
 
     always @(*) begin
-        if (ui_in[2]) begin
-            // Mode 3: "Ezekiel WAS HERE" (16 states)
+        if (ui_in[3]) begin
+            // Mode 4: "I STUCK IN PCB. HELP PLS"
             case (state)
+                5'd0:  seg_decoder = 8'b00110000; // 'I'
+                5'd1:  seg_decoder = 8'b00000000; // Blank
+                5'd2:  seg_decoder = 8'b01101101; // 'S'
+                5'd3:  seg_decoder = 8'b00000111; // 'T'
+                5'd4:  seg_decoder = 8'b00111110; // 'U'
+                5'd5:  seg_decoder = 8'b00111001; // 'C'
+                5'd6:  seg_decoder = 8'b01110100; // 'K'
+                5'd7:  seg_decoder = 8'b00000000; // Blank
+                5'd8:  seg_decoder = 8'b00110000; // 'I'
+                5'd9:  seg_decoder = 8'b01010100; // 'n'
+                5'd10: seg_decoder = 8'b00000000; // Blank
+                5'd11: seg_decoder = 8'b01110011; // 'P'
+                5'd12: seg_decoder = 8'b00111001; // 'C'
+                5'd13: seg_decoder = 8'b01111100; // 'b'
+                5'd14: seg_decoder = 8'b10000000; // '.'
+                5'd15: seg_decoder = 8'b00000000; // Blank
+                5'd16: seg_decoder = 8'b01110110; // 'H'
+                5'd17: seg_decoder = 8'b01111001; // 'E'
+                5'd18: seg_decoder = 8'b00111000; // 'L'
+                5'd19: seg_decoder = 8'b01110011; // 'P'
+                5'd20: seg_decoder = 8'b00000000; // Blank
+                5'd21: seg_decoder = 8'b01110011; // 'P'
+                5'd22: seg_decoder = 8'b00111000; // 'L'
+                5'd23: seg_decoder = 8'b01101101; // 'S'
+                default: seg_decoder = 8'b00000000;
+            endcase
+        end else if (ui_in[2]) begin
+            // Mode 3: "Ezekiel WAS HERE"
+            case (state[3:0])
                 4'b0000: seg_decoder = 8'b01111001; // 'E'
                 4'b0001: seg_decoder = 8'b01011011; // 'z'
                 4'b0010: seg_decoder = 8'b01111001; // 'e'
@@ -65,7 +102,7 @@ module tt_um_ucl_display (
                 4'b1001: seg_decoder = 8'b01110111; // 'A'
                 4'b1010: seg_decoder = 8'b01101101; // 'S'
                 4'b1011: seg_decoder = 8'b00000000; // Blank
-                4'b1100: seg_decoder = 8'b01110110; // 'H'
+                4'b1100: seg_decoder = 8'b01110116; // 'H'
                 4'b1101: seg_decoder = 8'b01111001; // 'E'
                 4'b1110: seg_decoder = 8'b01010000; // 'r'
                 4'b1111: seg_decoder = 8'b01111001; // 'E'
@@ -80,7 +117,7 @@ module tt_um_ucl_display (
             end
         end else begin
             // Mode 1: Normal UCL sequence
-            case (state)
+            case (state[3:0])
                 4'b0000: seg_decoder = 8'b00111110; // 'U'
                 4'b0001: seg_decoder = 8'b00111001; // 'C'
                 4'b0010: seg_decoder = 8'b00111000; // 'L'
@@ -89,7 +126,7 @@ module tt_um_ucl_display (
                 4'b0101: seg_decoder = 8'b00111111; // '0'
                 4'b0110: seg_decoder = 8'b01011011; // '2'
                 4'b0111: seg_decoder = 8'b00000111; // '7'
-                4'b1000: seg_decoder = 8'b01111000; // Smiley Face ☺
+                4'b1000: seg_decoder = 8'b01111100; // Smiley Face ☺
                 default: seg_decoder = 8'b00000000;
             endcase
         end

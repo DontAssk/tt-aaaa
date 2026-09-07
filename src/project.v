@@ -29,18 +29,18 @@ module tt_um_ucl_display (
         end
     end
 
-    // 5-bit state counter (cycles up to 22 states)
+    // 5-bit state counter
     reg [4:0] state;
 
-    // Set sequence length dynamically based on input selection
+    // Set sequence length dynamically based on active mode
     reg [4:0] max_state;
     always @(*) begin
         if (ui_in[3])
-            max_state = 5'd23; // "I STUCK IN PCB. HELP PLS" (23 characters: 0 to 22)
+            max_state = 5'd23; // "I STUCK IN PCB. HELP PLSS" (24 states: 0 to 23)
         else if (ui_in[2])
-            max_state = 5'd15; // "Ezekiel WAS HERE" (16 characters: 0 to 15)
+            max_state = 5'd15; // "Ezekiel WAS HERE" (16 states: 0 to 15)
         else
-            max_state = 5'd8;  // "UCL 2027? ☺" (9 characters: 0 to 8)
+            max_state = 5'd8;  // "UCL 2027? ☺" (9 states: 0 to 8)
     end
 
     always @(posedge clk or negedge rst_n) begin
@@ -59,7 +59,7 @@ module tt_um_ucl_display (
 
     always @(*) begin
         if (ui_in[3]) begin
-            // Mode 4: "I STUCK IN PCB. HELP PLS"
+            // Mode 4: "I STUCK IN PCB. HELP PLSS"
             case (state)
                 5'd0:  seg_decoder = 8'b00110000; // 'I'
                 5'd1:  seg_decoder = 8'b00000000; // Blank
@@ -102,7 +102,7 @@ module tt_um_ucl_display (
                 4'b1001: seg_decoder = 8'b01110111; // 'A'
                 4'b1010: seg_decoder = 8'b01101101; // 'S'
                 4'b1011: seg_decoder = 8'b00000000; // Blank
-                4'b1100: seg_decoder = 8'b01110116; // 'H'
+                4'b1100: seg_decoder = 8'b01110110; // 'H'
                 4'b1101: seg_decoder = 8'b01111001; // 'E'
                 4'b1110: seg_decoder = 8'b01010000; // 'r'
                 4'b1111: seg_decoder = 8'b01111001; // 'E'
@@ -126,7 +126,7 @@ module tt_um_ucl_display (
                 4'b0101: seg_decoder = 8'b00111111; // '0'
                 4'b0110: seg_decoder = 8'b01011011; // '2'
                 4'b0111: seg_decoder = 8'b00000111; // '7'
-                4'b1000: seg_decoder = 8'b01111100; // Smiley Face ☺
+                4'b1000: seg_decoder = 8'b01111000; // Smiley Face ☺
                 default: seg_decoder = 8'b00000000;
             endcase
         end

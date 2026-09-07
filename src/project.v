@@ -32,7 +32,7 @@ module tt_um_ucl_display (
     // 4-bit state counter (cycles 0 to 8)
     reg [3:0] state;
 
-       always @(posedge clk or negedge rst_n) begin
+    always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             state <= 4'b0000;
         end else if (slow_tick && ui_in[0]) begin // Advances ONLY when UI_IN[0] is ON
@@ -43,22 +43,32 @@ module tt_um_ucl_display (
         end
     end
 
-    // Map 4-bit state to 7-segment display: {dp, g, f, e, d, c, b, a}
+    // Map state to 7-segment display: {dp, g, f, e, d, c, b, a}
     reg [7:0] seg_decoder;
 
     always @(*) begin
-        case (state)
-            4'b0000: seg_decoder = 8'b00111110; // 'U'
-            4'b0001: seg_decoder = 8'b00111001; // 'C'
-            4'b0010: seg_decoder = 8'b00111000; // 'L'
-            4'b0011: seg_decoder = 8'b00000000; // Blank
-            4'b0100: seg_decoder = 8'b01011011; // '2'
-            4'b0101: seg_decoder = 8'b00111111; // '0'
-            4'b0110: seg_decoder = 8'b01011011; // '2'
-            4'b0111: seg_decoder = 8'b00000111; // '7'
-            4'b1000: seg_decoder = 8'b01111100; // Smiley Face ☺
-            default: seg_decoder = 8'b00000000;
-        endcase
+        if (ui_in[1]) begin
+            // Mode 2: Flash 'A' and '.' alternately based on state counter bit
+            if (state[0]) begin
+                seg_decoder = 8'b01110111; // 'A'
+            end else begin
+                seg_decoder = 8'b10000000; // '.' (decimal point only)
+            end
+        end else begin
+            // Mode 1: Normal UCL sequence
+            case (state)
+                4'b0000: seg_decoder = 8'b00111110; // 'U'
+                4'b0001: seg_decoder = 8'b00111001; // 'C'
+                4'b0010: seg_decoder = 8'b00111000; // 'L'
+                4'b0011: seg_decoder = 8'b00000000; // Blank
+                4'b0100: seg_decoder = 8'b01011011; // '2'
+                4'b0101: seg_decoder = 8'b00111111; // '0'
+                4'b0110: seg_decoder = 8'b01011011; // '2'
+                4'b0111: seg_decoder = 8'b00000111; // '7'
+                4'b1000: seg_decoder = 8'b01111100; // Smiley Face ☺
+                default: seg_decoder = 8'b00000000;
+            endcase
+        end
     end
 
     // Output pattern to Tiny Tapeout output pins
